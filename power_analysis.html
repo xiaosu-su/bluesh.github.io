@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电力负荷预测与分析项目 - 春日部的告别的个人博客</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="profile">
+            <h1>电力负荷预测与分析项目</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">返回首页</a>
+        </nav>
+    </header>
+
+    <main class="project-detail">
+        <section class="visualization-section">
+            <h2>可视化结果</h2>
+            
+            <div class="visualization-item">
+                <h3>模型训练过程</h3>
+                <div class="visualization-content">
+                    <img src="assets/images/projects/power/training_history.png" alt="模型训练过程">
+                    <div class="visualization-description">
+                        <h4>图像说明：</h4>
+                        <ul>
+                            <li>横轴：训练轮次（Epoch）</li>
+                            <li>纵轴：损失值（Loss）</li>
+                            <li>包含两条曲线：
+                                <ul>
+                                    <li>Training Loss（训练损失）：表示模型在训练数据上的表现</li>
+                                    <li>Validation Loss（验证损失）：表示模型在验证数据上的表现</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <h4>图像用途：</h4>
+                        <ul>
+                            <li>观察模型是否正常学习</li>
+                            <li>判断是否存在过拟合或欠拟合</li>
+                            <li>评估模型训练的收敛情况</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-item">
+                <h3>负荷预测结果</h3>
+                <div class="visualization-content">
+                    <img src="assets/images/projects/power/load_prediction.png" alt="负荷预测结果">
+                    <div class="visualization-description">
+                        <h4>图像说明：</h4>
+                        <ul>
+                            <li>横轴：时间（24小时，15分钟间隔）</li>
+                            <li>纵轴：负荷值（MW）</li>
+                            <li>红色曲线：表示预测的负荷值</li>
+                        </ul>
+                        <h4>图像用途：</h4>
+                        <ul>
+                            <li>直观展示全天96个时间点的负荷预测结果</li>
+                            <li>观察负荷变化趋势</li>
+                            <li>分析预测结果的合理性</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="files-section">
+            <h2>生成文件说明</h2>
+            
+            <div class="file-item">
+                <h3>数据文件</h3>
+                <div class="file-content">
+                    <h4>normalized_data.csv</h4>
+                    <ul>
+                        <li>包含归一化后的历史负荷数据</li>
+                        <li>列说明：
+                            <ul>
+                                <li>Time：时间点</li>
+                                <li>normalized_load：归一化后的负荷值（范围0-1）</li>
+                            </ul>
+                        </li>
+                        <li>用途：为模型训练提供标准化的输入数据</li>
+                    </ul>
+
+                    <h4>predictions_2024_01_01.csv</h4>
+                    <ul>
+                        <li>包含2024年1月1日的负荷预测结果</li>
+                        <li>列说明：
+                            <ul>
+                                <li>datetime：预测时间点（15分钟间隔）</li>
+                                <li>predicted_load：预测的负荷值（MW）</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="file-item">
+                <h3>模型文件</h3>
+                <div class="file-content">
+                    <h4>scaler.save</h4>
+                    <ul>
+                        <li>保存的归一化器参数文件</li>
+                        <li>用途：
+                            <ul>
+                                <li>确保预测值的反归一化过程与训练数据一致</li>
+                                <li>便于后续使用相同的归一化标准</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>load_prediction_documentation.txt</h4>
+                    <ul>
+                        <li>项目的技术文档</li>
+                        <li>内容包括：
+                            <ul>
+                                <li>算法选择说明</li>
+                                <li>实现过程详解</li>
+                                <li>模型构建说明</li>
+                                <li>预测过程说明</li>
+                                <li>结果分析</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html> 

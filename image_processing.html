@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字图像处理项目</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/project-detail.css">
+</head>
+<body>
+    <header>
+        <nav class="detail-nav">
+            <a href="index.html" class="back-link">← 返回首页</a>
+            <h1>数字图像处理项目</h1>
+        </nav>
+    </header>
+
+    <main class="project-detail">
+        <section class="project-overview">
+            <h2>项目概述</h2>
+            <div class="overview-content">
+                <img src="assets/images/projects/image-processing/program.jpg" alt="项目界面" class="overview-image">
+                <div class="overview-text">
+                    <p>该项目是一个功能丰富的图像处理工具，提供多种图像处理功能，包括基本的图像操作、图像增强、图像变换、滤波、形态学处理、边缘检测以及药片检测。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>功能列表</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>数字图像处理工具</h3>
+                    <div class="feature-content">
+                        <h4>文件操作</h4>
+                        <ul>
+                            <li>打开图片：支持多种格式（.jpg, .jpeg, .png, .bmp, .gif, .tiff）</li>
+                            <li>保存图片：将处理后的图片保存为指定格式</li>
+                        </ul>
+
+                        <h4>基础操作</h4>
+                        <ul>
+                            <li>灰度化：将彩色图像转换为灰度图像</li>
+                            <li>二值化：将灰度图像转换为二值图像</li>
+                        </ul>
+
+                        <h4>图像运算</h4>
+                        <ul>
+                            <li>图像加法：将两张相同尺寸的图像相加</li>
+                            <li>图像减法：将两张相同尺寸的图像相减</li>
+                            <li>逻辑与运算：对两张相同尺寸的图像进行逻辑与运算</li>
+                            <li>逻辑或运算：对两张相同尺寸的图像进行逻辑或运算</li>
+                        </ul>
+
+                        <h4>图像增强</h4>
+                        <ul>
+                            <li>亮度调整：通过滑块调整图像的亮度</li>
+                            <li>对比度调整：通过滑块调整图像的对比度</li>
+                            <li>直方图均衡化：增强图像的对比度</li>
+                        </ul>
+
+                        <h4>图像变换</h4>
+                        <ul>
+                            <li>旋转：输入角度旋转图像</li>
+                            <li>镜像：水平、垂直或同时进行镜像变换</li>
+                        </ul>
+
+                        <h4>图像滤波</h4>
+                        <ul>
+                            <li>均值滤波：使用均值滤波器平滑图像</li>
+                            <li>中值滤波：使用中值滤波器去噪</li>
+                            <li>高斯滤波：使用高斯滤波器平滑图像</li>
+                        </ul>
+
+                        <h4>形态学处理</h4>
+                        <ul>
+                            <li>腐蚀：对图像进行腐蚀操作</li>
+                            <li>膨胀：对图像进行膨胀操作</li>
+                            <li>开运算：去除小物体</li>
+                            <li>闭运算：填补小孔</li>
+                        </ul>
+
+                        <h4>边缘检测</h4>
+                        <ul>
+                            <li>Canny边缘检测：检测图像中的边缘</li>
+                            <li>Hough直线检测：检测图像中的直线</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <h3>药片检测工具</h3>
+                    <div class="feature-content">
+                        <p>该工具实现了药片检测功能，主要包括以下步骤：</p>
+                        <ul>
+                            <li>读取输入图像并显示</li>
+                            <li>进行形态学处理（腐蚀）以去除噪声</li>
+                            <li>将图像转换为灰度图并进行二值化处理</li>
+                            <li>使用分水岭算法进行图像分割</li>
+                            <li>统计并标记检测到的药片数量，并在图像上绘制轮廓和计数</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="implementation">
+            <h2>使用说明</h2>
+            <div class="usage-content">
+                <h3>环境要求</h3>
+                <p>确保已安装以下Python库：</p>
+                <pre><code class="language-bash">
+pip install tkinter
+pip install opencv-python
+pip install numpy
+pip install Pillow
+pip install matplotlib
+                </code></pre>
+
+                <h3>代码示例</h3>
+                <div class="code-section">
+                    <h4>图像处理基础功能示例</h4>
+                    <pre><code class="language-python">
+import cv2
+import numpy as np
+from PIL import Image, ImageTk
+import tkinter as tk
+from tkinter import filedialog
+
+class ImageProcessor:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("图像处理工具")
+        
+        # 创建菜单栏
+        self.create_menu()
+        
+        # 创建工具栏
+        self.create_toolbar()
+        
+    def create_menu(self):
+        menubar = tk.Menu(self.window)
+        
+        # 文件菜单
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label="打开", command=self.open_image)
+        file_menu.add_command(label="保存", command=self.save_image)
+        menubar.add_cascade(label="文件", menu=file_menu)
+        
+        # 基础操作菜单
+        basic_menu = tk.Menu(menubar, tearoff=0)
+        basic_menu.add_command(label="灰度化", command=self.to_gray)
+        basic_menu.add_command(label="二值化", command=self.threshold)
+        menubar.add_cascade(label="基础操作", menu=basic_menu)
+        
+        self.window.config(menu=menubar)
+                    </code></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 春日部的告别的个人博客 | 数字图像处理项目</p>
+    </footer>
+
+    <script src="assets/js/prism.js"></script>
+</body>
+</html> 
