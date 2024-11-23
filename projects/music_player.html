@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简约音乐播放器 - 春日部的告别</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <a href="../index.html" class="nav-link">返回首页</a>
+        </nav>
+    </header>
+
+    <main class="project-detail">
+        <h1>在线音乐播放器</h1>
+        
+        <p>一个基于 PyQt5 开发的在线音乐播放器，支持在线搜索、播放音乐，显示歌词和封面。</p>
+
+        <section>
+            <h2>功能特点</h2>
+            <ul>
+                <li>
+                    <h3>用户系统</h3>
+                    <ul>
+                        <li>账号注册</li>
+                        <li>用户登录</li>
+                        <li>安全密码存储</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>音乐播放</h3>
+                    <ul>
+                        <li>在线音乐搜索</li>
+                        <li>音乐播放控制（播放/暂停/上一首/下一首）</li>
+                        <li>进度条控制</li>
+                        <li>音量调节</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>界面显示</h3>
+                    <ul>
+                        <li>歌曲封面显示</li>
+                        <li>动态歌词显示</li>
+                        <li>播放状态显示</li>
+                        <li>美观的用户界面</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>API 说明</h2>
+            <p>本项目使用咪咕音乐 API 接口：</p>
+
+            <h3>接口地址</h3>
+            <pre><code>https://api.cenguigui.cn/api/mg_music/</code></pre>
+
+            <h3>请求方式</h3>
+            <p>GET</p>
+
+            <h3>参数说明</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>参数名</th>
+                        <th>必填</th>
+                        <th>类型</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>msg</td>
+                        <td>是</td>
+                        <td>string</td>
+                        <td>歌曲名字/歌手名字</td>
+                    </tr>
+                    <tr>
+                        <td>n</td>
+                        <td>否</td>
+                        <td>int</td>
+                        <td>选择对应歌曲序号,为空则返回列表</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>否</td>
+                        <td>string</td>
+                        <td>返回格式,可填text,默认json</td>
+                    </tr>
+                    <tr>
+                        <td>br</td>
+                        <td>否</td>
+                        <td>int</td>
+                        <td>1=默认最高音质,2=HQ高品质MP3</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>请求示例</h3>
+            <pre><code>https://api.cenguigui.cn/api/mg_music/?msg=周杰伦&n=1&type=json</code></pre>
+
+            <h3>返回数据示例</h3>
+            <pre><code>{
+    "code": 200,
+    "msg": "请求成功",
+    "data": {
+        "title": "最后的战役",
+        "singer": "周杰伦",
+        "cover": "https://d.musicapp.migu.cn/xxx.webp",
+        "lrc_url": "https://d.musicapp.migu.cn/xxx",
+        "link": "https://music.migu.cn/xxx",
+        "music_url": "http://freetyst.nf.migu.cn/xxx.mp3"
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>使用说明</h2>
+            <ol>
+                <li>启动程序后，首先需要登录或注册账号</li>
+                <li>在搜索框输入歌曲名或歌手名进行搜索</li>
+                <li>双击歌曲列表中的歌曲进行播放</li>
+                <li>使用播放控制按钮控制音乐播放</li>
+                <li>可以通过进度条调整播放进度</li>
+                <li>使用音量滑块调节音量</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>技术特点</h2>
+            <ul>
+                <li>使用 PyQt5 构建用户界面</li>
+                <li>异步加载机制，提升响应速度</li>
+                <li>缓存系统，优化资源加载</li>
+                <li>SQLite 数据库存储用户信息</li>
+                <li>动态歌词解析和显示</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>系统要求</h2>
+            <ul>
+                <li>Python 3.x</li>
+                <li>Windows/Linux/MacOS</li>
+                <li>网络连接</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>注意事项</h2>
+            <ul>
+                <li>需要保持网络连接以使用在线音乐功能</li>
+                <li>首次运行会自动创建用户数据库</li>
+                <li>建议使用稳定的网络连接以获得最佳体验</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>作者</h2>
+            <p>春日部的告别</p>
+            <div class="contact-info">
+                <p>📧 邮箱：1638752551@qq.com</p>
+                <p>💬 微信：ari-xss</p>
+                <p>🐧 QQ：1638752551</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>许可证</h2>
+            <p>MIT License</p>
+        </section>
+
+        <section>
+            <h2>更新日志</h2>
+            <h3>v1.0.0 (2024-03-xx)</h3>
+            <ul>
+                <li>初始版本发布</li>
+                <li>实现基本的音乐播放功能</li>
+                <li>添加用户系统</li>
+                <li>实现在线音乐搜索</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 春日部的告别. All rights reserved.</p>
+    </footer>
+</body>
+</html> 
