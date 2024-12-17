@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣诞彩蛋 - 春日部的告别</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #0a0a2a;
+        }
+
+        #musicToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .greeting {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 48px;
+            color: #fff;
+            text-shadow: 0 0 10px #ff69b4,
+                         0 0 20px #ff69b4,
+                         0 0 30px #ff69b4;
+            font-family: "华文行楷", "楷体", cursive;
+            z-index: 100;
+            animation: bounce 1s ease-in-out infinite,
+                       glowing 1.5s ease-in-out infinite;
+            letter-spacing: 5px;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+            30% {
+                transform: translateX(-50%) translateY(-25px) scale(1.1);
+            }
+            50% {
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+            70% {
+                transform: translateX(-50%) translateY(-15px) scale(1.05);
+            }
+        }
+
+        @keyframes glowing {
+            0%, 100% {
+                text-shadow: 0 0 10px #ff69b4,
+                             0 0 20px #ff69b4,
+                             0 0 30px #ff69b4,
+                             0 0 40px #ff1493;
+                color: #fff;
+            }
+            50% {
+                text-shadow: 0 0 20px #ff1493,
+                             0 0 30px #ff1493,
+                             0 0 40px #ff1493,
+                             0 0 50px #ff69b4;
+                color: #ffe4e1;
+            }
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <source src="assets/music/christmas.mp3" type="audio/mpeg">
+    </audio>
+    <button id="musicToggle">播放音乐</button>
+    <a href="index.html" class="back-button">返回首页</a>
+    <div id="greeting" class="greeting">田颖圣诞快乐</div>
+    <canvas id="christmasTree"></canvas>
+
+    <script>
+        // 音乐控制
+        const audio = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+
+        // 页面加载完成后自动播放音乐
+        window.addEventListener('load', async () => {
+            try {
+                await audio.play();
+                musicToggle.textContent = '暂停音乐';
+            } catch (err) {
+                console.error('自动播放失败:', err);
+                musicToggle.textContent = '播放音乐';
+            }
+        });
+
+        // 添加音频加载事件监听
+        audio.addEventListener('loadeddata', () => {
+            console.log('音频已加载完成');
+        });
+
+        audio.addEventListener('error', (e) => {
+            console.error('音频加载失败:', e);
+            alert('音频文件加载失败，请检查文件是否存在');
+        });
+
+        // 修改音乐播放逻辑
+        musicToggle.addEventListener('click', async () => {
+            try {
+                if (audio.paused) {
+                    audio.currentTime = 0;
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        await playPromise;
+                        musicToggle.textContent = '暂停音乐';
+                    }
+                } else {
+                    audio.pause();
+                    musicToggle.textContent = '播放音乐';
+                }
+            } catch (err) {
+                console.error('播放失败:', err);
+                alert('音乐播放失败，请检查音频文件是否正确');
+            }
+        });
+
+        // 确保音频初始状态为暂停
+        audio.pause();
+
+        // 圣诞树绘制
+        const canvas = document.getElementById('christmasTree');
+        const ctx = canvas.getContext('2d');
+
+        // 设置画布尺寸
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 添加雪花类
+        class Snowflake {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -10;
+                this.size = Math.random() * 3 + 2;
+                this.speed = Math.random() * 2 + 1;
+                this.swing = Math.random() * 3;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.y / 30) * this.swing;
+                
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // 创建雪花数组
+        const snowflakes = Array(50).fill().map(() => new Snowflake());
+
+        // 绘制星星函数
+        function drawStar(cx, cy, size, time) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(time * 0.3);
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ffd700';
+            
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                const x = Math.cos(angle) * size;
+                const y = Math.sin(angle) * size;
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            
+            // 添加星光效果
+            ctx.globalAlpha = 0.5;
+            ctx.scale(1.5, 1.5);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        // 更新绘制圣诞树函数
+        function drawTree() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景渐变
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0a2a');
+            gradient.addColorStop(1, '#1a1a3a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制雪花
+            snowflakes.forEach(snow => {
+                snow.update();
+                snow.draw();
+            });
+
+            // 树干 - 添加纹理效果
+            const trunkGradient = ctx.createLinearGradient(
+                canvas.width/2 - 30, 
+                canvas.height - 100,
+                canvas.width/2 + 30,
+                canvas.height
+            );
+            trunkGradient.addColorStop(0, '#3d2616');
+            trunkGradient.addColorStop(0.5, '#5c3a21');
+            trunkGradient.addColorStop(1, '#3d2616');
+            
+            ctx.fillStyle = trunkGradient;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2 - 30, canvas.height);
+            ctx.lineTo(canvas.width/2 + 30, canvas.height);
+            ctx.lineTo(canvas.width/2 + 20, canvas.height - 100);
+            ctx.lineTo(canvas.width/2 - 20, canvas.height - 100);
+            ctx.fill();
+            
+            // 树叶层次 - 使用曲线使树更自然
+            const treeColors = ['#0f5132', '#1a7431', '#25934b', '#2da65a', '#34bf68'];
+            const layers = 6;
+            const baseWidth = 240;
+            const heightStep = 70;
+            
+            for (let i = 0; i < layers; i++) {
+                ctx.fillStyle = treeColors[i % treeColors.length];
+                ctx.beginPath();
+                
+                const y = canvas.height - 100 - i * heightStep;
+                const width = baseWidth * (layers - i) / layers;
+                const curveHeight = heightStep * 1.2;
+                
+                ctx.moveTo(canvas.width/2, y - curveHeight);
+                ctx.quadraticCurveTo(
+                    canvas.width/2 - width/4, y - curveHeight/2,
+                    canvas.width/2 - width/2, y
+                );
+                ctx.quadraticCurveTo(
+                    canvas.width/2 - width/4, y + 20,
+                    canvas.width/2, y + 10
+                );
+                ctx.quadraticCurveTo(
+                    canvas.width/2 + width/4, y + 20,
+                    canvas.width/2 + width/2, y
+                );
+                ctx.quadraticCurveTo(
+                    canvas.width/2 + width/4, y - curveHeight/2,
+                    canvas.width/2, y - curveHeight
+                );
+                
+                ctx.fill();
+                
+                // 添加树叶纹理
+                ctx.strokeStyle = `rgba(255, 255, 255, 0.1)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            
+            // 装饰品 - 增加数量和变化
+            const time = Date.now() / 1000;
+            const ornaments = 40;
+            const colors = ['#ff0000', '#ffff00', '#ff69b4', '#87ceeb', '#ffd700', '#ffffff'];
+            
+            for (let i = 0; i < ornaments; i++) {
+                const angle = (i / ornaments) * Math.PI * 2 + time * 0.1;
+                const radius = 90 + Math.sin(time + i) * 5;
+                const y = canvas.height - 150 - (i / ornaments) * 400;
+                const x = canvas.width/2 + Math.sin(angle) * (radius * (1 - i/ornaments/2));
+                
+                // 装饰品发光效果
+                ctx.beginPath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = colors[i % colors.length];
+                ctx.arc(x, y, 4 + Math.sin(time * 2 + i) * 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 添加装饰品光晕
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + Math.sin(time * 2 + i) * 0.1})`;
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // 重置阴影效果
+            ctx.shadowBlur = 0;
+            
+            // 顶部星星
+            ctx.fillStyle = '#ffd700';
+            const starSize = 30;
+            const starY = canvas.height - 100 - layers * heightStep - 20;
+            drawStar(canvas.width/2, starY, starSize, time);
+            
+            requestAnimationFrame(drawTree);
+        }
+
+        // 开始动画
+        drawTree();
+    </script>
+</body>
+</html> 
