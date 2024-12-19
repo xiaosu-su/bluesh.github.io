@@ -9,22 +9,109 @@
         body {
             margin: 0;
             overflow: hidden;
-            background: #0a0a2a;
+            background: linear-gradient(215deg, #000000, #190a35, #102770);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(1px 1px at 25% 25%, white 1px, transparent 0),
+                radial-gradient(1px 1px at 50% 50%, white 1px, transparent 0),
+                radial-gradient(2px 2px at 75% 75%, rgba(255, 255, 255, 0.8) 1px, transparent 0),
+                radial-gradient(2px 2px at 25% 75%, rgba(255, 255, 255, 0.7) 1px, transparent 0),
+                radial-gradient(1px 1px at 65% 15%, white 1px, transparent 0),
+                radial-gradient(1.5px 1.5px at 35% 85%, rgba(255, 255, 255, 0.9) 1px, transparent 0),
+                radial-gradient(1px 1px at 85% 35%, white 1px, transparent 0);
+            background-size: 350px 350px, 200px 200px, 250px 250px, 300px 300px, 
+                             400px 400px, 350px 350px, 450px 450px;
+            animation: starTwinkle 8s linear infinite;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(62, 84, 172, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(148, 93, 219, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 123, 234, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(62, 84, 172, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(148, 93, 219, 0.3) 0%, transparent 50%);
+            animation: nebulaFloat 15s ease-in-out infinite alternate;
+            z-index: 2;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.5;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+                transform: translateY(-350px);
+            }
+        }
+
+        @keyframes nebulaFloat {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.5;
+            }
         }
 
         #musicToggle {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 10px;
-            background: #fff;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            z-index: 1000;
+            font-family: "微软雅黑", sans-serif;
+            color: #ff1493;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #musicToggle:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+        }
+
+        #musicToggle:active {
+            transform: scale(0.95);
         }
 
         canvas {
             display: block;
+            position: relative;
+            z-index: 3;
         }
 
         .greeting {
@@ -38,7 +125,7 @@
                          0 0 20px #ff69b4,
                          0 0 30px #ff69b4;
             font-family: "华文行楷", "楷体", cursive;
-            z-index: 100;
+            z-index: 4;
             animation: bounce 1s ease-in-out infinite,
                        glowing 1.5s ease-in-out infinite;
             letter-spacing: 5px;
@@ -85,12 +172,127 @@
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
-            z-index: 100;
+            z-index: 4;
             transition: all 0.3s ease;
         }
 
         .back-button:hover {
             background: rgba(255, 255, 255, 0.3);
+        }
+
+        .message-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.7);
+            z-index: 4;
+            display: none;
+            text-align: center;
+            font-family: "华文行楷", "楷体", cursive;
+            color: #ff1493;
+            font-size: 24px;
+            max-width: 80%;
+            animation: popupFade 0.5s ease-in-out,
+                       popupGlow 2s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes popupFade {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes popupGlow {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(255, 105, 180, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 105, 180, 0.9);
+            }
+        }
+
+        #popupMessage {
+            animation: textFloat 0.5s ease-out,
+                       textGlow 2s ease-in-out infinite;
+            line-height: 1.5;
+        }
+
+        @keyframes textFloat {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255, 105, 180, 0.7);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 105, 180, 0.9);
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #ff1493;
+            transition: transform 0.3s ease;
+        }
+
+        .close-button:hover {
+            transform: rotate(90deg);
+        }
+
+        .heart-animation {
+            position: fixed;
+            pointer-events: none;
+            animation: heartFloat 1s ease-out forwards;
+            font-size: 24px;
+            color: #ff69b4;
+            z-index: 1000;
+        }
+
+        .heart-animation::before {
+            content: '❤';
+        }
+
+        @keyframes heartFloat {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2) rotate(360deg) translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes leafGlow {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.3);
+            }
         }
     </style>
 </head>
@@ -100,10 +302,18 @@
     </audio>
     <button id="musicToggle">播放音乐</button>
     <a href="index.html" class="back-button">返回首页</a>
-    <div id="greeting" class="greeting">田颖圣诞快乐</div>
+    <div id="greeting" class="greeting">颖⭐圣诞快乐</div>
     <canvas id="christmasTree"></canvas>
+    <div class="message-popup" id="messagePopup">
+        <span class="close-button" onclick="closePopup()">×</span>
+        <p id="popupMessage"></p>
+    </div>
 
     <script>
+        // 在开头声明鼠标位置变量
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+
         // 音乐控制
         const audio = document.getElementById('bgMusic');
         const musicToggle = document.getElementById('musicToggle');
@@ -165,83 +375,103 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // 添加雪花类
-        class Snowflake {
-            constructor() {
-                this.reset();
-            }
+        // 修改祝福语数组
+        const blessings = [
+            "春、夏、秋、冬和你在一起",
+            "希望你永远开心，没有烦恼",
+            "无须忆怜往，但祈繁章",
+            "永远太遥远，如果明天你还在，那就足够了",
+            "时间是诠释一切最好的答案",
+            "亲爱的你，要先爱自己"
+        ];
 
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = -10;
-                this.size = Math.random() * 3 + 2;
-                this.speed = Math.random() * 2 + 1;
-                this.swing = Math.random() * 3;
-            }
+        // 修改点击检测函数
+        function isClickOnTreeLayer(x, y, layerY, width) {
+            const centerX = canvas.width / 2;
+            const triangleHeight = 70 * 1.2; // 增加检测区域高度
+            
+            // 计算当前层的顶部和底部位置
+            const layerTop = layerY - triangleHeight;
+            const layerBottom = layerY;
+            
+            // 计算水平距离
+            const relativeX = Math.abs(x - centerX);
+            const maxWidth = width / 2;
+            
+            // 计算在这个高度上的最大允许宽度
+            const heightRatio = (y - layerTop) / triangleHeight;
+            const allowedWidth = maxWidth * heightRatio;
+            
+            // 检查点是否在这个三角形区域内
+            return y >= layerTop && y <= layerBottom && relativeX <= allowedWidth;
+        }
 
-            update() {
-                this.y += this.speed;
-                this.x += Math.sin(this.y / 30) * this.swing;
+        // 添加弹窗显示函数
+        function showMessage(message) {
+            const popup = document.getElementById('messagePopup');
+            const popupMessage = document.getElementById('popupMessage');
+            
+            // 添加打字机效果
+            popupMessage.textContent = '';
+            popup.style.display = 'block';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < message.length) {
+                    popupMessage.textContent += message.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+            
+            typeWriter();
+        }
+
+        // 添加弹窗关闭函数
+        function closePopup() {
+            document.getElementById('messagePopup').style.display = 'none';
+        }
+
+        // 添加点击动画效果
+        function createHeartAnimation(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'heart-animation';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                document.body.removeChild(heart);
+            }, 1000);
+        }
+
+        // 修改点击事件监听，添加动画
+        canvas.addEventListener('click', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            createHeartAnimation(event.clientX, event.clientY);
+            
+            for (let i = 0; i < 6; i++) {
+                const layerY = canvas.height - 100 - i * 70;
+                const width = 240 * (6 - i) / 6;
                 
-                if (this.y > canvas.height) {
-                    this.reset();
+                if (isClickOnTreeLayer(x, y, layerY, width)) {
+                    showMessage(blessings[i % blessings.length]);
+                    break;
                 }
             }
+        });
 
-            draw() {
-                ctx.beginPath();
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // 创建雪花数组
-        const snowflakes = Array(50).fill().map(() => new Snowflake());
-
-        // 绘制星星函数
-        function drawStar(cx, cy, size, time) {
-            ctx.save();
-            ctx.translate(cx, cy);
-            ctx.rotate(time * 0.3);
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#ffd700';
-            
-            ctx.beginPath();
-            for (let i = 0; i < 5; i++) {
-                const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
-                const x = Math.cos(angle) * size;
-                const y = Math.sin(angle) * size;
-                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-            }
-            ctx.closePath();
-            ctx.fill();
-            
-            // 添加星光效果
-            ctx.globalAlpha = 0.5;
-            ctx.scale(1.5, 1.5);
-            ctx.fill();
-            
-            ctx.restore();
-        }
-
-        // 更新绘制圣诞树函数
+        // 修改树叶绘制部分
         function drawTree() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // 绘制背景渐变
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#0a0a2a');
-            gradient.addColorStop(1, '#1a1a3a');
-            ctx.fillStyle = gradient;
+            // 移除原来的背景渐变，使用透明背景
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // 绘制雪花
-            snowflakes.forEach(snow => {
-                snow.update();
-                snow.draw();
-            });
-
             // 树干 - 添加纹理效果
             const trunkGradient = ctx.createLinearGradient(
                 canvas.width/2 - 30, 
@@ -261,20 +491,34 @@
             ctx.lineTo(canvas.width/2 - 20, canvas.height - 100);
             ctx.fill();
             
-            // 树叶层次 - 使用曲线使树更自然
+            // 树叶层次
             const treeColors = ['#0f5132', '#1a7431', '#25934b', '#2da65a', '#34bf68'];
             const layers = 6;
             const baseWidth = 240;
             const heightStep = 70;
             
+            // 在绘制树叶层次时添加交互效果
             for (let i = 0; i < layers; i++) {
-                ctx.fillStyle = treeColors[i % treeColors.length];
-                ctx.beginPath();
-                
                 const y = canvas.height - 100 - i * heightStep;
                 const width = baseWidth * (layers - i) / layers;
                 const curveHeight = heightStep * 1.2;
                 
+                // 获取鼠标位置（已经在全局定义）
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = lastMouseX - rect.left;
+                const mouseY = lastMouseY - rect.top;
+                
+                // 设置默认颜色
+                ctx.fillStyle = treeColors[i % treeColors.length];
+                
+                // 检查鼠标是否悬停在当前层
+                if (isClickOnTreeLayer(mouseX, mouseY, y, width)) {
+                    // 使用更亮的颜色
+                    ctx.fillStyle = '#4CAF50';
+                }
+                
+                // 绘制树叶
+                ctx.beginPath();
                 ctx.moveTo(canvas.width/2, y - curveHeight);
                 ctx.quadraticCurveTo(
                     canvas.width/2 - width/4, y - curveHeight/2,
@@ -320,7 +564,7 @@
                 ctx.arc(x, y, 4 + Math.sin(time * 2 + i) * 2, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // 添加装饰品光晕
+                // 添加饰品光晕
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + Math.sin(time * 2 + i) * 0.1})`;
                 ctx.arc(x, y, 8, 0, Math.PI * 2);
@@ -341,6 +585,39 @@
 
         // 开始动画
         drawTree();
+
+        // 添加鼠标移动事件跟踪（移到最后）
+        canvas.addEventListener('mousemove', (event) => {
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+        });
+
+        // 添加回 drawStar 函数
+        function drawStar(cx, cy, size, time) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(time * 0.3);
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ffd700';
+            
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                const x = Math.cos(angle) * size;
+                const y = Math.sin(angle) * size;
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            
+            // 添加星光效果
+            ctx.globalAlpha = 0.5;
+            ctx.scale(1.5, 1.5);
+            ctx.fill();
+            
+            ctx.restore();
+        }
     </script>
+    <script src="https://api.vvhan.com/api/script/snow"></script>
 </body>
 </html> 
