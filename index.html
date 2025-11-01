@@ -19,97 +19,6 @@
             position: relative;
         }
 
-        /* 音乐控制面板 */
-        .music-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            min-width: 200px;
-        }
-
-        .music-control h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            color: #667eea;
-            text-align: center;
-        }
-
-        .music-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .music-btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .music-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
-        }
-
-        .music-btn:active {
-            transform: translateY(0);
-        }
-
-        .music-btn.active {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        }
-
-        .music-source {
-            display: flex;
-            gap: 5px;
-            margin-top: 5px;
-        }
-
-        .source-btn {
-            flex: 1;
-            padding: 8px 10px;
-            border: 2px solid #667eea;
-            border-radius: 6px;
-            background: white;
-            color: #667eea;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .source-btn:hover {
-            background: #f0f0ff;
-        }
-
-        .source-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .file-info {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-            word-break: break-all;
-        }
-
         .message-item {
             position: absolute;
             background: rgba(255, 255, 255, 0.95);
@@ -404,23 +313,14 @@
 <body>
     <div id="messages-container"></div>
     
-    <!-- 音乐控制面板 -->
-    <div class="music-control">
-        <h3>🎵 音乐控制</h3>
-        <div class="music-buttons">
-            <button id="playBtn" class="music-btn">▶️ 播放</button>
-            <button id="pauseBtn" class="music-btn" style="display: none;">⏸️ 暂停</button>
-            <div class="music-source">
-                <button id="repoBtn" class="source-btn active">📦 仓库</button>
-                <button id="localBtn" class="source-btn">💾 本地</button>
-            </div>
-            <input type="file" id="fileInput" accept="audio/*">
-            <div id="fileInfo" class="file-info"></div>
-        </div>
-    </div>
-    
     <!-- 背景音乐 -->
-    <audio id="background-music" loop preload="none">
+    <audio id="background-music" loop preload="auto">
+        <!-- 尝试多种路径 -->
+        <source src="./Music.mp3" type="audio/mpeg">
+        <source src="Music.mp3" type="audio/mpeg">
+        <source src="/Music.mp3" type="audio/mpeg">
+        <!-- GitHub Raw 链接备用（需要替换为你的实际仓库路径） -->
+        <!-- <source src="https://raw.githubusercontent.com/你的用户名/你的仓库名/main/Music.mp3" type="audio/mpeg"> -->
         您的浏览器不支持音频播放。
     </audio>
 
@@ -766,169 +666,36 @@
             });
         }
 
-        // 音乐控制变量
-        let musicSource = 'repo'; // 'repo' 或 'local'
-        let localMusicFile = null;
-
-        // 初始化音乐控制
-        const music = document.getElementById('background-music');
-        const playBtn = document.getElementById('playBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const repoBtn = document.getElementById('repoBtn');
-        const localBtn = document.getElementById('localBtn');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-
-        // 设置音乐音量
-        if (music) {
-            music.volume = 0.5;
-        }
-
-        // 播放按钮
-        playBtn.addEventListener('click', function() {
-            playMusic();
-        });
-
-        // 暂停按钮
-        pauseBtn.addEventListener('click', function() {
-            pauseMusic();
-        });
-
-        // 仓库播放按钮
-        repoBtn.addEventListener('click', function() {
-            musicSource = 'repo';
-            repoBtn.classList.add('active');
-            localBtn.classList.remove('active');
-            fileInfo.textContent = '';
-            
-            // 加载仓库音乐
-            loadRepoMusic();
-        });
-
-        // 本地播放按钮
-        localBtn.addEventListener('click', function() {
-            musicSource = 'local';
-            localBtn.classList.add('active');
-            repoBtn.classList.remove('active');
-            fileInput.click();
-        });
-
-        // 文件选择
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                localMusicFile = file;
-                loadLocalMusic(file);
-            }
-        });
-
-        // 加载仓库音乐
-        function loadRepoMusic() {
-            if (!music) return;
-            
-            // 尝试多个仓库链接（优先使用 assets/Music/music.mp3）
-            const repoUrls = [
-                'https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/main/assets/Music/music.mp3',
-                'https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/main/assets/Music/Music.mp3',
-                'https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/master/assets/Music/music.mp3',
-                'https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/master/assets/Music/Music.mp3',
-                './assets/Music/music.mp3',
-                './assets/Music/Music.mp3',
-                'assets/Music/music.mp3',
-                'assets/Music/Music.mp3',
-                '/assets/Music/music.mp3',
-                '/assets/Music/Music.mp3'
-            ];
-            
-            let currentIndex = 0;
-            
-            function tryLoadUrl(index) {
-                if (index >= repoUrls.length) {
-                    fileInfo.textContent = '❌ 无法加载仓库音乐';
-                    return;
-                }
-                
-                music.src = repoUrls[index];
-                music.load();
-                
-                music.addEventListener('error', function onError() {
-                    music.removeEventListener('error', onError);
-                    tryLoadUrl(index + 1);
-                }, { once: true });
-                
-                music.addEventListener('canplay', function onCanPlay() {
-                    music.removeEventListener('canplay', onCanPlay);
-                    fileInfo.textContent = '✅ 已加载仓库音乐';
-                }, { once: true });
-            }
-            
-            tryLoadUrl(0);
-        }
-
-        // 加载本地音乐
-        function loadLocalMusic(file) {
-            if (!music || !file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                music.src = e.target.result;
-                music.load();
-                fileInfo.textContent = `✅ 已加载: ${file.name}`;
-            };
-            reader.onerror = function() {
-                fileInfo.textContent = '❌ 文件读取失败';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // 播放音乐
-        function playMusic() {
-            if (!music || !music.src) {
-                if (musicSource === 'repo') {
-                    loadRepoMusic();
-                } else {
-                    fileInfo.textContent = '⚠️ 请先选择本地音乐文件';
-                    return;
-                }
-            }
-            
-            music.play().then(() => {
-                playBtn.style.display = 'none';
-                pauseBtn.style.display = 'block';
-                if (musicSource === 'repo') {
-                    fileInfo.textContent = '🎵 正在播放：仓库音乐';
-                } else {
-                    fileInfo.textContent = `🎵 正在播放：${localMusicFile?.name || '本地音乐'}`;
-                }
-            }).catch(error => {
-                console.error('播放失败:', error);
-                fileInfo.textContent = '❌ 播放失败，请检查文件';
-            });
-        }
-
-        // 暂停音乐
-        function pauseMusic() {
+        // 播放背景音乐
+        function playBackgroundMusic() {
+            const music = document.getElementById('background-music');
             if (music) {
-                music.pause();
-                playBtn.style.display = 'block';
-                pauseBtn.style.display = 'none';
-                fileInfo.textContent = '⏸️ 已暂停';
+                music.volume = 0.5; // 设置音量为50%
+                
+                // 检查音频是否加载成功
+                music.addEventListener('error', function(e) {
+                    console.error('音频加载失败:', e);
+                    console.log('提示: 请确保 Music.mp3 文件在仓库根目录，或使用 GitHub Raw 链接');
+                    // 可以尝试使用 GitHub Raw 链接
+                    // music.src = 'https://raw.githubusercontent.com/你的用户名/你的仓库名/main/Music.mp3';
+                });
+                
+                music.addEventListener('canplay', function() {
+                    console.log('音频加载成功，可以播放');
+                });
+                
+                music.play().catch(error => {
+                    // 如果自动播放失败（浏览器策略），提示用户交互后播放
+                    console.log('需要用户交互后才能播放音乐:', error);
+                });
             }
         }
-
-        // 音乐播放结束事件
-        if (music) {
-            music.addEventListener('ended', function() {
-                playBtn.style.display = 'block';
-                pauseBtn.style.display = 'none';
-            });
-        }
-
-        // 初始化加载仓库音乐
-        loadRepoMusic();
 
         // 页面加载后开始自动弹出
         window.addEventListener('load', function() {
+            // 尝试播放背景音乐
+            playBackgroundMusic();
+            
             // 创建固定数量的消息来组成心形（建议50-100条）
             const heartMessageCount = 80;
             let createdCount = 0;
@@ -953,6 +720,21 @@
             createBatch();
         });
 
+        // 用户点击页面后播放音乐（解决浏览器自动播放限制）
+        document.addEventListener('click', function() {
+            const music = document.getElementById('background-music');
+            if (music && music.paused) {
+                playBackgroundMusic();
+            }
+        }, { once: true });
+
+        // 用户触摸屏幕后播放音乐（移动端）
+        document.addEventListener('touchstart', function() {
+            const music = document.getElementById('background-music');
+            if (music && music.paused) {
+                playBackgroundMusic();
+            }
+        }, { once: true });
 
         // 窗口大小改变时清理位置记录
         window.addEventListener('resize', function() {
