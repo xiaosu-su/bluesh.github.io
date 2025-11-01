@@ -314,9 +314,14 @@
     <div id="messages-container"></div>
     
     <!-- 背景音乐 -->
-    <audio id="background-music" loop autoplay>
+    <audio id="background-music" loop preload="auto">
+        <!-- 使用 GitHub Raw 链接（优先） -->
+        <source src="https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/main/Music.mp3" type="audio/mpeg">
+        <source src="https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/master/Music.mp3" type="audio/mpeg">
+        <!-- 备用路径 -->
+        <source src="./Music.mp3" type="audio/mpeg">
         <source src="Music.mp3" type="audio/mpeg">
-        <source src="Music.mp3" type="audio/mp3">
+        <source src="/Music.mp3" type="audio/mpeg">
         您的浏览器不支持音频播放。
     </audio>
 
@@ -667,9 +672,29 @@
             const music = document.getElementById('background-music');
             if (music) {
                 music.volume = 0.5; // 设置音量为50%
+                
+                // 检查音频是否加载成功
+                music.addEventListener('error', function(e) {
+                    console.error('音频加载失败:', e);
+                    console.log('尝试使用 GitHub Raw 链接...');
+                    // 自动切换到 GitHub Raw 链接
+                    const rawUrl = 'https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/main/Music.mp3';
+                    music.src = rawUrl;
+                    music.load();
+                    music.play().catch(err => {
+                        console.log('Raw 链接也失败，尝试 master 分支...');
+                        music.src = 'https://raw.githubusercontent.com/xiaosu-su/bluesh.github.io/master/Music.mp3';
+                        music.load();
+                    });
+                });
+                
+                music.addEventListener('canplay', function() {
+                    console.log('音频加载成功，可以播放');
+                });
+                
                 music.play().catch(error => {
                     // 如果自动播放失败（浏览器策略），提示用户交互后播放
-                    console.log('需要用户交互后才能播放音乐');
+                    console.log('需要用户交互后才能播放音乐:', error);
                 });
             }
         }
