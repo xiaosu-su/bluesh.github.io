@@ -312,6 +312,13 @@
 </head>
 <body>
     <div id="messages-container"></div>
+    
+    <!-- 背景音乐 -->
+    <audio id="background-music" loop autoplay>
+        <source src="Music.mp3" type="audio/mpeg">
+        <source src="Music.mp3" type="audio/mp3">
+        您的浏览器不支持音频播放。
+    </audio>
 
     <script>
         // 200+ 条现代生活化祝福语
@@ -655,8 +662,23 @@
             });
         }
 
+        // 播放背景音乐
+        function playBackgroundMusic() {
+            const music = document.getElementById('background-music');
+            if (music) {
+                music.volume = 0.5; // 设置音量为50%
+                music.play().catch(error => {
+                    // 如果自动播放失败（浏览器策略），提示用户交互后播放
+                    console.log('需要用户交互后才能播放音乐');
+                });
+            }
+        }
+
         // 页面加载后开始自动弹出
         window.addEventListener('load', function() {
+            // 尝试播放背景音乐
+            playBackgroundMusic();
+            
             // 创建固定数量的消息来组成心形（建议50-100条）
             const heartMessageCount = 80;
             let createdCount = 0;
@@ -680,6 +702,22 @@
             // 开始创建消息
             createBatch();
         });
+
+        // 用户点击页面后播放音乐（解决浏览器自动播放限制）
+        document.addEventListener('click', function() {
+            const music = document.getElementById('background-music');
+            if (music && music.paused) {
+                playBackgroundMusic();
+            }
+        }, { once: true });
+
+        // 用户触摸屏幕后播放音乐（移动端）
+        document.addEventListener('touchstart', function() {
+            const music = document.getElementById('background-music');
+            if (music && music.paused) {
+                playBackgroundMusic();
+            }
+        }, { once: true });
 
         // 窗口大小改变时清理位置记录
         window.addEventListener('resize', function() {
