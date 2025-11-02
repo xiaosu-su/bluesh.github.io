@@ -308,10 +308,65 @@
         .move-to-heart {
             transition: left 2s ease-in-out, top 2s ease-in-out !important;
         }
+
+        /* 音乐控制按钮样式 */
+        .music-control-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid rgba(102, 126, 234, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            user-select: none;
+        }
+
+        .music-control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 1);
+            border-color: rgba(102, 126, 234, 0.8);
+        }
+
+        .music-control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .music-control-btn .icon {
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        .music-control-btn.playing .icon {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
     <div id="messages-container"></div>
+    
+    <!-- 音乐控制按钮 -->
+    <button id="music-control-btn" class="music-control-btn" title="播放/暂停音乐">
+        <span class="icon">🎵</span>
+    </button>
     
     <!-- 背景音乐 -->
     <audio id="background-music" loop preload="auto">
@@ -691,8 +746,52 @@
             }
         }
 
+        // 初始化音乐控制按钮
+        function initMusicControl() {
+            const musicBtn = document.getElementById('music-control-btn');
+            const music = document.getElementById('background-music');
+            const icon = musicBtn.querySelector('.icon');
+            
+            if (!musicBtn || !music) return;
+            
+            // 更新按钮状态
+            function updateButtonState() {
+                if (music.paused) {
+                    musicBtn.classList.remove('playing');
+                    icon.textContent = '🎵';
+                    musicBtn.title = '播放音乐';
+                } else {
+                    musicBtn.classList.add('playing');
+                    icon.textContent = '⏸️';
+                    musicBtn.title = '暂停音乐';
+                }
+            }
+            
+            // 按钮点击事件
+            musicBtn.addEventListener('click', function() {
+                if (music.paused) {
+                    music.play().catch(error => {
+                        console.log('播放失败:', error);
+                    });
+                } else {
+                    music.pause();
+                }
+                updateButtonState();
+            });
+            
+            // 监听音乐播放状态变化
+            music.addEventListener('play', updateButtonState);
+            music.addEventListener('pause', updateButtonState);
+            
+            // 初始状态
+            updateButtonState();
+        }
+
         // 页面加载后开始自动弹出
         window.addEventListener('load', function() {
+            // 初始化音乐控制按钮
+            initMusicControl();
+            
             // 尝试播放背景音乐
             playBackgroundMusic();
             
@@ -721,10 +820,15 @@
         });
 
         // 用户点击页面后播放音乐（解决浏览器自动播放限制）
-        document.addEventListener('click', function() {
-            const music = document.getElementById('background-music');
-            if (music && music.paused) {
-                playBackgroundMusic();
+        // 注意：这个功能现在由音乐按钮控制，所以可以移除或保留作为备用
+        document.addEventListener('click', function(e) {
+            // 如果点击的不是音乐按钮，尝试播放
+            if (e.target.id !== 'music-control-btn' && !e.target.closest('#music-control-btn')) {
+                const music = document.getElementById('background-music');
+                if (music && music.paused) {
+                    // 这个功能现在由按钮控制，所以注释掉自动播放
+                    // playBackgroundMusic();
+                }
             }
         }, { once: true });
 
