@@ -721,28 +721,25 @@
             });
         }
 
-        // 播放背景音乐
+        // 播放背景音乐（仅在用户交互后调用）
         function playBackgroundMusic() {
             const music = document.getElementById('background-music');
-            if (music) {
+            if (music && music.paused) {
                 music.volume = 0.5; // 设置音量为50%
                 
-                // 检查音频是否加载成功
-                music.addEventListener('error', function(e) {
-                    console.error('音频加载失败:', e);
-                    console.log('提示: 请确保 Music.mp3 文件在仓库根目录，或使用 GitHub Raw 链接');
-                    // 可以尝试使用 GitHub Raw 链接
-                    // music.src = 'https://raw.githubusercontent.com/你的用户名/你的仓库名/main/Music.mp3';
-                });
-                
-                music.addEventListener('canplay', function() {
-                    console.log('音频加载成功，可以播放');
-                });
-                
-                music.play().catch(error => {
-                    // 如果自动播放失败（浏览器策略），提示用户交互后播放
-                    console.log('需要用户交互后才能播放音乐:', error);
-                });
+                // 使用 Promise 处理播放，避免竞态条件
+                const playPromise = music.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            // 播放成功
+                            console.log('音乐播放成功');
+                        })
+                        .catch(error => {
+                            // 播放失败（通常是浏览器策略限制）
+                            console.log('音乐播放需要用户交互:', error);
+                        });
+                }
             }
         }
 
@@ -753,6 +750,19 @@
             const icon = musicBtn.querySelector('.icon');
             
             if (!musicBtn || !music) return;
+            
+            // 设置初始音量
+            music.volume = 0.5;
+            
+            // 检查音频是否加载成功
+            music.addEventListener('error', function(e) {
+                console.error('音频加载失败:', e);
+                console.log('提示: 请确保 Music.mp3 文件在仓库根目录');
+            });
+            
+            music.addEventListener('canplay', function() {
+                console.log('音频加载成功，可以播放');
+            });
             
             // 更新按钮状态
             function updateButtonState() {
@@ -767,21 +777,52 @@
                 }
             }
             
-            // 按钮点击事件
+            // 按钮点击事件 - 使用标志避免重复点击
+            let isPlaying = false;
             musicBtn.addEventListener('click', function() {
+                if (isPlaying) return; // 防止重复点击
+                
                 if (music.paused) {
-                    music.play().catch(error => {
-                        console.log('播放失败:', error);
-                    });
+                    isPlaying = true;
+                    // 尝试播放
+                    const playPromise = music.play();
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                // 播放成功
+                                isPlaying = false;
+                                updateButtonState();
+                            })
+                            .catch(error => {
+                                // 播放失败
+                                isPlaying = false;
+                                console.log('播放失败:', error);
+                                updateButtonState();
+                            });
+                    } else {
+                        isPlaying = false;
+                        updateButtonState();
+                    }
                 } else {
+                    // 暂停音乐
                     music.pause();
+                    updateButtonState();
                 }
+            });
+            
+            // 监听音乐播放状态变化（自动更新按钮状态）
+            music.addEventListener('play', function() {
                 updateButtonState();
             });
             
-            // 监听音乐播放状态变化
-            music.addEventListener('play', updateButtonState);
-            music.addEventListener('pause', updateButtonState);
+            music.addEventListener('pause', function() {
+                updateButtonState();
+            });
+            
+            // 监听播放结束（避免状态不同步）
+            music.addEventListener('ended', function() {
+                updateButtonState();
+            });
             
             // 初始状态
             updateButtonState();
@@ -789,11 +830,8 @@
 
         // 页面加载后开始自动弹出
         window.addEventListener('load', function() {
-            // 初始化音乐控制按钮
+            // 初始化音乐控制按钮（不自动播放，等待用户点击）
             initMusicControl();
-            
-            // 尝试播放背景音乐
-            playBackgroundMusic();
             
             // 创建固定数量的消息来组成心形（建议50-100条）
             const heartMessageCount = 80;
@@ -820,25 +858,8 @@
         });
 
         // 用户点击页面后播放音乐（解决浏览器自动播放限制）
-        // 注意：这个功能现在由音乐按钮控制，所以可以移除或保留作为备用
-        document.addEventListener('click', function(e) {
-            // 如果点击的不是音乐按钮，尝试播放
-            if (e.target.id !== 'music-control-btn' && !e.target.closest('#music-control-btn')) {
-                const music = document.getElementById('background-music');
-                if (music && music.paused) {
-                    // 这个功能现在由按钮控制，所以注释掉自动播放
-                    // playBackgroundMusic();
-                }
-            }
-        }, { once: true });
-
-        // 用户触摸屏幕后播放音乐（移动端）
-        document.addEventListener('touchstart', function() {
-            const music = document.getElementById('background-music');
-            if (music && music.paused) {
-                playBackgroundMusic();
-            }
-        }, { once: true });
+        // 注意：现在完全由音乐按钮控制，移除了自动播放逻辑
+        // 用户需要点击音乐按钮来播放/暂停音乐
 
         // 窗口大小改变时清理位置记录
         window.addEventListener('resize', function() {
