@@ -371,11 +371,11 @@
     <!-- 背景音乐 -->
     <audio id="background-music" loop preload="auto">
         <!-- 尝试多种路径 -->
-        <source src="./Music.mp3" type="audio/mpeg">
-        <source src="Music.mp3" type="audio/mpeg">
-        <source src="/Music.mp3" type="audio/mpeg">
+        <source src="./music.mp3" type="audio/mpeg">
+        <source src="music.mp3" type="audio/mpeg">
+        <source src="/music.mp3" type="audio/mpeg">
         <!-- GitHub Raw 链接备用（需要替换为你的实际仓库路径） -->
-        <!-- <source src="https://raw.githubusercontent.com/你的用户名/你的仓库名/main/Music.mp3" type="audio/mpeg"> -->
+        <!-- <source src="https://raw.githubusercontent.com/你的用户名/你的仓库名/main/music.mp3" type="audio/mpeg"> -->
         您的浏览器不支持音频播放。
     </audio>
 
@@ -757,7 +757,7 @@
             // 检查音频是否加载成功
             music.addEventListener('error', function(e) {
                 console.error('音频加载失败:', e);
-                console.log('提示: 请确保 Music.mp3 文件在仓库根目录');
+                console.log('提示: 请确保 music.mp3 文件在仓库根目录');
             });
             
             music.addEventListener('canplay', function() {
